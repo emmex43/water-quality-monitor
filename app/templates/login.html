@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Water Quality Monitor{% endblock %}
+
+{% block content %}
+<div class="auth-form">
+    <h2>Login to Your Account</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <button type="submit" class="btn btn-block">Login</button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 1rem;">
+        <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+    };
+    
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert('Login successful! Redirecting to dashboard...');
+            window.location.href = '/dashboard';
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Login failed: ' + error.message);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Water Quality Monitor{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Welcome, {{ user.name }}! 👋</h1>
+    <p>Water Quality Monitoring Dashboard - SDG 6</p>
+    <p><small>Organization: {{ user.organization or 'Individual' }} | Role: {{ user.role.title() }}</small></p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-number" id="totalReadings">0</span>
+        <span class="stat-label">Total Readings</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number" id="latestPh">-</span>
+        <span class="stat-label">Latest pH Level</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number" id="latestTurbidity">-</span>
+        <span class="stat-label">Latest Turbidity (NTU)</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number" id="latestOxygen">-</span>
+        <span class="stat-label">Dissolved Oxygen (mg/L)</span>
+    </div>
+</div>
+
+<!-- Add New Reading Form -->
+<div class="auth-form">
+    <h3>➕ Add New Water Reading</h3>
+    <form id="addReadingForm">
+        <div class="form-group">
+            <label for="location_name">Location Name</label>
+            <input type="text" id="location_name" name="location_name" required placeholder="e.g., Community River, Village Well">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="ph_level">pH Level</label>
+                <input type="number" id="ph_level" name="ph_level" step="0.1" min="0" max="14" placeholder="7.0">
+            </div>
+            
+            <div class="form-group">
+                <label for="turbidity_ntu">Turbidity (NTU)</label>
+                <input type="number" id="turbidity_ntu" name="turbidity_ntu" step="0.1" min="0" placeholder="2.5">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="dissolved_oxygen">Dissolved Oxygen (mg/L)</label>
+                <input type="number" id="dissolved_oxygen" name="dissolved_oxygen" step="0.1" min="0" placeholder="8.2">
+            </div>
+            
+            <div class="form-group">
+                <label for="temperature_c">Temperature (°C)</label>
+                <input type="number" id="temperature_c" name="temperature_c" step="0.1" placeholder="22.5">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="conductivity_us">Conductivity (μS/cm)</label>
+            <input type="number" id="conductivity_us" name="conductivity_us" step="1" placeholder="350">
+        </div>
+        
+        <button type="submit" class="btn btn-block">Add Water Reading</button>
+    </form>
+</div>
+
+<!-- Water Readings Table -->
+<div class="auth-form">
+    <h3>📊 Your Water Quality Readings</h3>
+    <div id="readingsTable">
+        <p>Loading your water quality data...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Load user's water readings when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserReadings();
+});
+
+async function loadUserReadings() {
+    try {
+        const response = await fetch('/api/water/readings');
+        const data = await response.json();
+        
+        if (response.ok) {
+            updateDashboardStats(data.readings);
+            displayReadingsTable(data.readings);
+        } else {
+            document.getElementById('readingsTable').innerHTML = '<p>Error loading data: ' + data.error + '</p>';
+        }
+    } catch (error) {
+        document.getElementById('readingsTable').innerHTML = '<p>Error loading data: ' + error.message + '</p>';
+    }
+}
+
+function updateDashboardStats(readings) {
+    // Update stats cards
+    document.getElementById('totalReadings').textContent = readings.length;
+    
+    if (readings.length > 0) {
+        const latest = readings[0];
+        document.getElementById('latestPh').textContent = latest.ph_level || '-';
+        document.getElementById('latestTurbidity').textContent = latest.turbidity_ntu || '-';
+        document.getElementById('latestOxygen').textContent = latest.dissolved_oxygen || '-';
+    }
+}
+
+function displayReadingsTable(readings) {
+    if (readings.length === 0) {
+        document.getElementById('readingsTable').innerHTML = '<p>No water quality readings yet. Add your first reading above!</p>';
+        return;
+    }
+    
+    let tableHTML = `
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Location</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">pH</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Turbidity</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Oxygen</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Temp</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    readings.forEach(reading => {
+        tableHTML += `
+            <tr style="border-bottom: 1px solid #dee2e6;">
+                <td style="padding: 12px;">${reading.location_name}</td>
+                <td style="padding: 12px;">${reading.ph_level || '-'}</td>
+                <td style="padding: 12px;">${reading.turbidity_ntu || '-'}</td>
+                <td style="padding: 12px;">${reading.dissolved_oxygen || '-'}</td>
+                <td style="padding: 12px;">${reading.temperature_c ? reading.temperature_c + '°C' : '-'}</td>
+                <td style="padding: 12px;">${new Date(reading.timestamp).toLocaleDateString()}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += '</tbody></table>';
+    document.getElementById('readingsTable').innerHTML = tableHTML;
+}
+
+// Handle form submission for new readings
+document.getElementById('addReadingForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        location_name: document.getElementById('location_name').value,
+        ph_level: parseFloat(document.getElementById('ph_level').value) || null,
+        turbidity_ntu: parseFloat(document.getElementById('turbidity_ntu').value) || null,
+        dissolved_oxygen: parseFloat(document.getElementById('dissolved_oxygen').value) || null,
+        temperature_c: parseFloat(document.getElementById('temperature_c').value) || null,
+        conductivity_us: parseFloat(document.getElementById('conductivity_us').value) || null
+    };
+    
+    try {
+        const response = await fetch('/api/water/reading', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert('Water reading added successfully!');
+            // Clear form
+            document.getElementById('addReadingForm').reset();
+            // Reload readings
+            loadUserReadings();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Failed to add reading: ' + error.message);
+    }
+});
+</script>
+{% endblock %}
