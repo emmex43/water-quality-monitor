@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Water Quality Monitor</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    
+    <style>
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 700;
+        }
+        
+        .border-left-primary {
+            border-left: 0.25rem solid #4e73df !important;
+        }
+        
+        .border-left-success {
+            border-left: 0.25rem solid #1cc88a !important;
+        }
+        
+        .border-left-info {
+            border-left: 0.25rem solid #36b9cc !important;
+        }
+        
+        .border-left-warning {
+            border-left: 0.25rem solid #f6c23e !important;
+        }
+        
+        .text-gray-800 {
+            color: #5a5c69 !important;
+        }
+        
+        .chart-area {
+            position: relative;
+            height: 20rem;
+            width: 100%;
+        }
+        
+        .chart-pie {
+            position: relative;
+            height: 15rem;
+            width: 100%;
+        }
+        
+        .role-badge {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.65rem;
+        }
+        
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-tint me-2"></i>
+                Water Quality Monitor
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-user me-1"></i>
+                    {{ user.name }} 
+                    <span class="badge role-badge bg-light text-dark">{{ user.get_role_display_name() }}</span>
+                </span>
+                <a class="nav-link" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-home me-1"></i>Main Dashboard
+                </a>
+                <a class="nav-link active" href="{{ url_for('analytics.analytics_dashboard') }}">
+                    <i class="fas fa-chart-bar me-1"></i>Analytics
+                </a>
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-chart-bar me-2"></i>Analytics Dashboard
+                </h1>
+                <p class="text-muted">Comprehensive water quality analytics and insights</p>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <!-- Total Readings Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Readings</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-readings">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-tint fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Excellent Quality Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Excellent Quality</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="excellent-readings">
+                                    <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Average pH Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Average pH</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="avg-ph">
+                                    <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-vial fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Locations Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Active Locations</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="active-locations">
+                                    <div class="spinner-border spinner-border-sm text-info" role="status"></div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-map-marker-alt fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row">
+            <!-- Water Quality Trends Chart -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Water Quality Trends (Last 30 Days)</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="loading-spinner" id="trends-loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading trends...</span>
+                            </div>
+                        </div>
+                        <div class="chart-area">
+                            <canvas id="trendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quality Distribution Chart -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Water Quality Distribution</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="loading-spinner" id="distribution-loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading distribution...</span>
+                            </div>
+                        </div>
+                        <div class="chart-pie pt-4 pb-2">
+                            <canvas id="qualityPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Insights (Researcher+ only) -->
+        {% if user.role in ['researcher', 'government', 'admin'] %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Location Insights</h6>
+                        <span class="badge bg-info">Researcher+</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="loading-spinner" id="locations-loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading locations...</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive" id="locations-table" style="display: none;">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Avg pH</th>
+                                        <th>Avg Dissolved Oxygen</th>
+                                        <th>Avg Turbidity</th>
+                                        <th>Total Readings</th>
+                                        <th>Last Reading</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="locationInsightsBody">
+                                    <!-- JavaScript will populate this -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- User Statistics (Admin only) -->
+        {% if user.role == 'admin' %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">User Statistics</h6>
+                        <span class="badge bg-danger">Admin Only</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="loading-spinner" id="users-loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading user stats...</span>
+                            </div>
+                        </div>
+                        <div class="chart-area">
+                            <canvas id="userStatsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap & Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Analytics JavaScript -->
+    <script>
+        // Pass user role to JavaScript
+        window.currentUserRole = "{{ user.role }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+</body>
+</html>

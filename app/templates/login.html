@@ -3,39 +3,78 @@
 {% block title %}Login - Water Quality Monitor{% endblock %}
 
 {% block content %}
-<div class="auth-form">
-    <h2>Login to Your Account</h2>
-    <form id="loginForm">
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" required>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0 shadow">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h3 class="mb-0"><i class="bi bi-box-arrow-in-right"></i> Login to Your Account</h3>
+            </div>
+            <div class="card-body p-4">
+                <!-- Simple Alert Area -->
+                <div id="alertArea"></div>
+                
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" name="email" required 
+                                   placeholder="Enter your email" value="water@community.org">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" required 
+                                   placeholder="Enter your password" value="securepassword123">
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg" id="loginButton">
+                            <i class="bi bi-box-arrow-in-right"></i> Login to Dashboard
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-muted">Don't have an account? 
+                        <a href="{{ url_for('register') }}" class="text-decoration-none fw-bold">Register here</a>
+                    </p>
+                </div>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        
-        <button type="submit" class="btn btn-block">Login</button>
-    </form>
-    
-    <div style="text-align: center; margin-top: 1rem;">
-        <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+// Simple login function without modals
+async function handleLogin(event) {
+    if (event) event.preventDefault();
     
-    const formData = {
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value
-    };
+    const submitButton = document.getElementById('loginButton');
+    const alertArea = document.getElementById('alertArea');
+    const originalText = submitButton.innerHTML;
     
     try {
+        // Clear previous alerts
+        alertArea.innerHTML = '';
+        
+        // Show loading state
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Logging in...';
+        submitButton.disabled = true;
+
+        const formData = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+        
+        console.log('🔐 Attempting login...');
+        
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
@@ -45,16 +84,53 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         });
         
         const data = await response.json();
+        console.log('📨 Login response:', data);
         
         if (response.ok) {
-            alert('Login successful! Redirecting to dashboard...');
+            // Show success message
+            alertArea.innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle"></i> Login successful! Redirecting...
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            console.log('✅ Login successful, redirecting to dashboard...');
+            
+            // Immediate redirect (no delay)
             window.location.href = '/dashboard';
+            
         } else {
-            alert('Error: ' + data.error);
+            throw new Error(data.error || 'Login failed');
         }
     } catch (error) {
-        alert('Login failed: ' + error.message);
+        console.error('❌ Login error:', error);
+        
+        // Show error message
+        alertArea.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="bi bi-exclamation-triangle"></i> ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+    } finally {
+        // Restore button state
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
+    }
+}
+
+// Add event listener
+document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+// Add enter key support
+document.getElementById('password').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        handleLogin();
     }
 });
+
+// Auto-fill demo credentials and try login (for testing)
+console.log('🚀 Login page loaded');
 </script>
 {% endblock %}

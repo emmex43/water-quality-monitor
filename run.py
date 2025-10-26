@@ -7,4 +7,5 @@ if __name__ == '__main__':
     print("💧 SDG 6: Clean Water and Sanitation")
     print("📍 Access the web interface at: http://localhost:5000")
     print("📱 Dashboard: http://localhost:5000/dashboard")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    print("📊 Analytics: http://localhost:5000/analytics/dashboard")
+    app.run(debug=False, host='0.0.0.0', port=5000)  # ✅ Changed debug=True to debug=False

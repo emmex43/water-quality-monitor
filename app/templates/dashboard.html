@@ -3,191 +3,215 @@
 {% block title %}Dashboard - Water Quality Monitor{% endblock %}
 
 {% block content %}
-<div class="dashboard-header">
-    <h1>Welcome, {{ user.name }}! 👋</h1>
-    <p>Water Quality Monitoring Dashboard - SDG 6</p>
-    <p><small>Organization: {{ user.organization or 'Individual' }} | Role: {{ user.role.title() }}</small></p>
+<!-- Dashboard Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-white border-0 shadow">
+            <div class="card-body text-center py-4">
+                <h1 class="display-5 fw-bold text-primary mb-2">Welcome, {{ user.name }}! 👋</h1>
+                <p class="lead text-muted">Water Quality Monitoring Dashboard - SDG 6</p>
+                <div class="row justify-content-center mt-3">
+                    <div class="col-auto">
+                        <span class="badge bg-info fs-6">
+                            <i class="bi bi-building"></i> {{ user.organization or 'Individual' }}
+                        </span>
+                    </div>
+                    <div class="col-auto">
+                        <span class="badge bg-secondary fs-6">
+                            <i class="bi bi-person-gear"></i> {{ user.role.title() }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <span class="stat-number" id="totalReadings">0</span>
-        <span class="stat-label">Total Readings</span>
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-droplet display-6 mb-2"></i>
+                <h2 class="stat-number" id="totalReadings">0</h2>
+                <p class="mb-0">Total Readings</p>
+            </div>
+        </div>
     </div>
-    <div class="stat-card">
-        <span class="stat-number" id="latestPh">-</span>
-        <span class="stat-label">Latest pH Level</span>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-white border-0 shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-speedometer2 text-primary display-6 mb-2"></i>
+                <h3 class="text-primary" id="latestPh">-</h3>
+                <p class="text-muted mb-0">Latest pH Level</p>
+            </div>
+        </div>
     </div>
-    <div class="stat-card">
-        <span class="stat-number" id="latestTurbidity">-</span>
-        <span class="stat-label">Latest Turbidity (NTU)</span>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-white border-0 shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-eye text-info display-6 mb-2"></i>
+                <h3 class="text-info" id="latestTurbidity">-</h3>
+                <p class="text-muted mb-0">Turbidity (NTU)</p>
+            </div>
+        </div>
     </div>
-    <div class="stat-card">
-        <span class="stat-number" id="latestOxygen">-</span>
-        <span class="stat-label">Dissolved Oxygen (mg/L)</span>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-white border-0 shadow">
+            <div class="card-body text-center">
+                <i class="bi bi-wind text-success display-6 mb-2"></i>
+                <h3 class="text-success" id="latestOxygen">-</h3>
+                <p class="text-muted mb-0">Dissolved Oxygen</p>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Add New Reading Form -->
-<div class="auth-form">
-    <h3>➕ Add New Water Reading</h3>
-    <form id="addReadingForm">
-        <div class="form-group">
-            <label for="location_name">Location Name</label>
-            <input type="text" id="location_name" name="location_name" required placeholder="e.g., Community River, Village Well">
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-                <label for="ph_level">pH Level</label>
-                <input type="number" id="ph_level" name="ph_level" step="0.1" min="0" max="14" placeholder="7.0">
+<!-- Add New Reading Card -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Water Reading</h4>
             </div>
-            
-            <div class="form-group">
-                <label for="turbidity_ntu">Turbidity (NTU)</label>
-                <input type="number" id="turbidity_ntu" name="turbidity_ntu" step="0.1" min="0" placeholder="2.5">
+            <div class="card-body">
+                <form id="addReadingForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="location_name" class="form-label">Location Name</label>
+                            <input type="text" class="form-control" id="location_name" name="location_name" required 
+                                   placeholder="e.g., Community River, Village Well">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ph_level" class="form-label">pH Level</label>
+                            <input type="number" class="form-control" id="ph_level" name="ph_level" 
+                                   step="0.1" min="0" max="14" placeholder="7.0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="turbidity_ntu" class="form-label">Turbidity (NTU)</label>
+                            <input type="number" class="form-control" id="turbidity_ntu" name="turbidity_ntu" 
+                                   step="0.1" min="0" placeholder="2.5">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="dissolved_oxygen" class="form-label">Dissolved Oxygen (mg/L)</label>
+                            <input type="number" class="form-control" id="dissolved_oxygen" name="dissolved_oxygen" 
+                                   step="0.1" min="0" placeholder="8.2">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="temperature_c" class="form-label">Temperature (°C)</label>
+                            <input type="number" class="form-control" id="temperature_c" name="temperature_c" 
+                                   step="0.1" placeholder="22.5">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="conductivity_us" class="form-label">Conductivity (μS/cm)</label>
+                            <input type="number" class="form-control" id="conductivity_us" name="conductivity_us" 
+                                   step="1" placeholder="350">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-check-circle"></i> Add Water Reading
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
+</div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-                <label for="dissolved_oxygen">Dissolved Oxygen (mg/L)</label>
-                <input type="number" id="dissolved_oxygen" name="dissolved_oxygen" step="0.1" min="0" placeholder="8.2">
-            </div>
-            
-            <div class="form-group">
-                <label for="temperature_c">Temperature (°C)</label>
-                <input type="number" id="temperature_c" name="temperature_c" step="0.1" placeholder="22.5">
+<!-- Search and Filter Section -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search locations...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="parameterFilter" class="form-select">
+                            <option value="">All Parameters</option>
+                            <option value="ph">pH Level</option>
+                            <option value="turbidity">Turbidity</option>
+                            <option value="oxygen">Dissolved Oxygen</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="dateFilter" class="form-select">
+                            <option value="">All Time</option>
+                            <option value="7">Last 7 Days</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="form-group">
-            <label for="conductivity_us">Conductivity (μS/cm)</label>
-            <input type="number" id="conductivity_us" name="conductivity_us" step="1" placeholder="350">
-        </div>
-        
-        <button type="submit" class="btn btn-block">Add Water Reading</button>
-    </form>
+    </div>
 </div>
 
 <!-- Water Readings Table -->
-<div class="auth-form">
-    <h3>📊 Your Water Quality Readings</h3>
-    <div id="readingsTable">
-        <p>Loading your water quality data...</p>
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-table"></i> Your Water Quality Readings</h4>
+                <span class="badge bg-primary fs-6" id="readingCount">0 readings</span>
+            </div>
+            <div class="card-body">
+                <div id="readingsTable">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading your water quality data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-check-circle"></i> Success</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage">Operation completed successfully!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Error</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage">An error occurred.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-// Load user's water readings when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    loadUserReadings();
-});
-
-async function loadUserReadings() {
-    try {
-        const response = await fetch('/api/water/readings');
-        const data = await response.json();
-        
-        if (response.ok) {
-            updateDashboardStats(data.readings);
-            displayReadingsTable(data.readings);
-        } else {
-            document.getElementById('readingsTable').innerHTML = '<p>Error loading data: ' + data.error + '</p>';
-        }
-    } catch (error) {
-        document.getElementById('readingsTable').innerHTML = '<p>Error loading data: ' + error.message + '</p>';
-    }
-}
-
-function updateDashboardStats(readings) {
-    // Update stats cards
-    document.getElementById('totalReadings').textContent = readings.length;
-    
-    if (readings.length > 0) {
-        const latest = readings[0];
-        document.getElementById('latestPh').textContent = latest.ph_level || '-';
-        document.getElementById('latestTurbidity').textContent = latest.turbidity_ntu || '-';
-        document.getElementById('latestOxygen').textContent = latest.dissolved_oxygen || '-';
-    }
-}
-
-function displayReadingsTable(readings) {
-    if (readings.length === 0) {
-        document.getElementById('readingsTable').innerHTML = '<p>No water quality readings yet. Add your first reading above!</p>';
-        return;
-    }
-    
-    let tableHTML = `
-        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
-            <thead>
-                <tr style="background: #f8f9fa;">
-                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Location</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">pH</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Turbidity</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Oxygen</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Temp</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Date</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    readings.forEach(reading => {
-        tableHTML += `
-            <tr style="border-bottom: 1px solid #dee2e6;">
-                <td style="padding: 12px;">${reading.location_name}</td>
-                <td style="padding: 12px;">${reading.ph_level || '-'}</td>
-                <td style="padding: 12px;">${reading.turbidity_ntu || '-'}</td>
-                <td style="padding: 12px;">${reading.dissolved_oxygen || '-'}</td>
-                <td style="padding: 12px;">${reading.temperature_c ? reading.temperature_c + '°C' : '-'}</td>
-                <td style="padding: 12px;">${new Date(reading.timestamp).toLocaleDateString()}</td>
-            </tr>
-        `;
-    });
-    
-    tableHTML += '</tbody></table>';
-    document.getElementById('readingsTable').innerHTML = tableHTML;
-}
-
-// Handle form submission for new readings
-document.getElementById('addReadingForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = {
-        location_name: document.getElementById('location_name').value,
-        ph_level: parseFloat(document.getElementById('ph_level').value) || null,
-        turbidity_ntu: parseFloat(document.getElementById('turbidity_ntu').value) || null,
-        dissolved_oxygen: parseFloat(document.getElementById('dissolved_oxygen').value) || null,
-        temperature_c: parseFloat(document.getElementById('temperature_c').value) || null,
-        conductivity_us: parseFloat(document.getElementById('conductivity_us').value) || null
-    };
-    
-    try {
-        const response = await fetch('/api/water/reading', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            alert('Water reading added successfully!');
-            // Clear form
-            document.getElementById('addReadingForm').reset();
-            // Reload readings
-            loadUserReadings();
-        } else {
-            alert('Error: ' + data.error);
-        }
-    } catch (error) {
-        alert('Failed to add reading: ' + error.message);
-    }
-});
-</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

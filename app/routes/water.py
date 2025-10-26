@@ -63,3 +63,30 @@ def init_water_routes(app):
             
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+
+    @app.route('/api/water/reading/<int:reading_id>', methods=['DELETE'])
+    @login_required
+    def delete_water_reading(reading_id):
+        """Delete a water quality reading"""
+        try:
+            # Find the reading
+            reading = WaterQuality.query.get(reading_id)
+            if not reading:
+                return jsonify({'error': 'Reading not found'}), 404
+            
+            # Check if the reading belongs to the current user
+            if reading.user_id != current_user.id:
+                return jsonify({'error': 'Unauthorized to delete this reading'}), 403
+            
+            # Delete the reading
+            db.session.delete(reading)
+            db.session.commit()
+            
+            return jsonify({
+                'message': 'Water reading deleted successfully!',
+                'deleted_id': reading_id
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': f'Failed to delete reading: {str(e)}'}), 400

@@ -3,53 +3,192 @@
 {% block title %}Register - Water Quality Monitor{% endblock %}
 
 {% block content %}
-<div class="auth-form">
-    <h2>Create Your Account</h2>
-    <form id="registerForm">
-        <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" name="name" required>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card border-0 shadow">
+            <div class="card-header bg-success text-white text-center py-3">
+                <h3 class="mb-0"><i class="bi bi-person-plus"></i> Create Your Account</h3>
+                <p class="mb-0 mt-2 small">Join our water quality monitoring community</p>
+            </div>
+            <div class="card-body p-4">
+                <form id="registerForm">
+                    <!-- Personal Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3"><i class="bi bi-person-badge"></i> Personal Information</h5>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" id="name" name="name" required 
+                                       placeholder="Enter your full name">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email" required 
+                                       placeholder="Enter your email">
+                            </div>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label for="address" class="form-label">Physical Address <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                <input type="text" class="form-control" id="address" name="address" required 
+                                       placeholder="Enter your complete address">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="telephone" class="form-label">Telephone Number <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input type="tel" class="form-control" id="telephone" name="telephone" required 
+                                       placeholder="Enter your phone number">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Organization & Role -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3"><i class="bi bi-building"></i> Organization & Role</h5>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="organization" class="form-label">Organization</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                <input type="text" class="form-control" id="organization" name="organization"
+                                       placeholder="Your organization (optional)">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="role" class="form-label">Your Role <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-gear"></i></span>
+                                <select class="form-select" id="role" name="role" required>
+                                    <option value="">Select your role</option>
+                                    <option value="community">🌊 Community Member</option>
+                                    <option value="researcher">🔬 Researcher / Scientist</option>
+                                    <option value="government">🏛️ Government Official</option>
+                                    <!-- Note: 'admin' role is assigned manually -->
+                                </select>
+                            </div>
+                            <div class="form-text">
+                                <small>
+                                    <strong>Role Permissions:</strong><br>
+                                    • <span class="text-primary">Community</span>: Submit & view public data<br>
+                                    • <span class="text-info">Researcher</span>: Access analytics & all data<br>
+                                    • <span class="text-success">Government</span>: Full data management
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3"><i class="bi bi-shield-lock"></i> Security</h5>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" required 
+                                       placeholder="Create a strong password" minlength="6">
+                            </div>
+                            <div class="form-text">Minimum 6 characters</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" class="form-control" id="confirmPassword" required 
+                                       placeholder="Confirm your password">
+                            </div>
+                            <div class="form-text">Must match the password above</div>
+                        </div>
+                    </div>
+
+                    <!-- Terms & Data Sharing -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="dataSharing" required>
+                                <label class="form-check-label" for="dataSharing">
+                                    I agree to share my water quality data publicly to help improve community water safety
+                                </label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg py-3">
+                            <i class="bi bi-person-plus"></i> Create My Account
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-muted">Already have an account? 
+                        <a href="{{ url_for('login') }}" class="text-decoration-none fw-bold">Login here</a>
+                    </p>
+                </div>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" required>
+    </div>
+</div>
+
+<!-- ADDED: Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-check-circle"></i> Success!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label for="address">Physical Address</label>
-            <input type="text" id="address" name="address" required>
+    </div>
+</div>
+
+<!-- ADDED: Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Error</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label for="telephone">Telephone Number</label>
-            <input type="tel" id="telephone" name="telephone" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="organization">Organization (Optional)</label>
-            <input type="text" id="organization" name="organization">
-        </div>
-        
-        <div class="form-group">
-            <label for="role">Role</label>
-            <select id="role" name="role" class="form-group input">
-                <option value="community">Community Member</option>
-                <option value="researcher">Researcher</option>
-                <option value="government">Government Agency</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        
-        <button type="submit" class="btn btn-block">Create Account</button>
-    </form>
-    
-    <div style="text-align: center; margin-top: 1rem;">
-        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
     </div>
 </div>
 {% endblock %}
@@ -58,18 +197,53 @@
 <script>
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+    console.log('🚀 Form submission started');
     
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        address: document.getElementById('address').value,
-        telephone: document.getElementById('telephone').value,
-        organization: document.getElementById('organization').value,
-        role: document.getElementById('role').value,
-        password: document.getElementById('password').value
-    };
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalText = submitButton.innerHTML;
     
+    // Validate required checkboxes
+    if (!document.getElementById('terms').checked) {
+        showError('You must agree to the Terms of Service');
+        return;
+    }
+    
+    if (!document.getElementById('dataSharing').checked) {
+        showError('You must agree to share water quality data');
+        return;
+    }
+    
+    // Validate passwords match
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (password !== confirmPassword) {
+        showError('Passwords do not match');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showError('Password must be at least 6 characters');
+        return;
+    }
+
     try {
+        // Show loading state
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Creating Account...';
+        submitButton.disabled = true;
+
+        const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value,
+            telephone: document.getElementById('telephone').value,
+            organization: document.getElementById('organization').value,
+            role: document.getElementById('role').value,
+            password: password
+        };
+        
+        console.log('📤 Sending registration data:', formData);
+        
         const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: {
@@ -78,16 +252,84 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             body: JSON.stringify(formData)
         });
         
+        console.log('📥 Response status:', response.status);
         const data = await response.json();
+        console.log('📥 Response data:', data);
         
         if (response.ok) {
-            alert('Registration successful! Please login.');
-            window.location.href = '/login';
+            console.log('✅ Registration successful');
+            showSuccess(`Account created successfully! Welcome as a ${getRoleDisplayName(formData.role)}. Redirecting to login...`);
+            
+            // Redirect to login after a short delay
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 3000);
         } else {
-            alert('Error: ' + data.error);
+            throw new Error(data.error || 'Registration failed');
         }
     } catch (error) {
-        alert('Registration failed: ' + error.message);
+        console.error('❌ Registration error:', error);
+        showError(error.message);
+    } finally {
+        // Restore button state
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
+    }
+});
+
+// Helper functions for modals
+function showSuccess(message) {
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    document.getElementById('successMessage').textContent = message;
+    successModal.show();
+}
+
+function showError(message) {
+    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    document.getElementById('errorMessage').textContent = 'Error: ' + message;
+    errorModal.show();
+}
+
+// Real-time password confirmation validation
+document.getElementById('confirmPassword').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (confirmPassword && password !== confirmPassword) {
+        this.classList.add('is-invalid');
+        this.classList.remove('is-valid');
+    } else if (confirmPassword) {
+        this.classList.add('is-valid');
+        this.classList.remove('is-invalid');
+    } else {
+        this.classList.remove('is-valid', 'is-invalid');
+    }
+});
+
+// Role description helper
+function getRoleDisplayName(role) {
+    const roleNames = {
+        'community': 'Community Member',
+        'researcher': 'Researcher', 
+        'government': 'Government Official',
+        'admin': 'System Administrator'
+    };
+    return roleNames[role] || role;
+}
+
+// Dynamic role description
+document.getElementById('role').addEventListener('change', function() {
+    const role = this.value;
+    const description = document.querySelector('.form-text small');
+    
+    if (role) {
+        const roleDescriptions = {
+            'community': '• Submit water quality readings<br>• View public data<br>• Basic dashboard access',
+            'researcher': '• Access to all analytics<br>• View all water quality data<br>• Advanced chart tools',
+            'government': '• Full data management<br>• User statistics access<br>• Administrative features'
+        };
+        
+        description.innerHTML = `<strong>${getRoleDisplayName(role)} Permissions:</strong><br>${roleDescriptions[role] || 'Basic access permissions'}`;
     }
 });
 </script>

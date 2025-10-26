@@ -22,6 +22,10 @@ def create_app():
     init_water_routes(app)
     init_auth_routes(app)
     
+    # Add analytics routes
+    from app.routes.analytics import analytics_bp
+    app.register_blueprint(analytics_bp, url_prefix='/analytics')
+    
     # Template routes
     @app.route('/login')
     def login():
