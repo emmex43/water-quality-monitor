@@ -6,8 +6,6 @@ Flask-Login==0.6.3
 Flask-Bcrypt==1.0.1
 Flask-WTF==1.1.1
 email-validator==2.0.0
-Flask==2.*
-Flask-SQLAlchemy==3.*
-Flask-Login==0.6.*
-Flask-Bcrypt==1.*
-Werkzeug==2.*
+Flask-SQLAlchemy==3.0.5
+Werkzeug==2.3.7
+gunicorn==22.0.0
