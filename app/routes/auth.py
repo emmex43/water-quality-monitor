@@ -1,9 +1,34 @@
-from flask import jsonify, request, session
+from flask import jsonify, request, session, render_template, redirect, url_for
 from app.database.connection import db
 from app.models.user import User
 from flask_login import login_user, logout_user, login_required, current_user
 
 def init_auth_routes(app):
+    # ===== TEMPLATE ROUTES =====
+    @app.route('/login')
+    def login_page():
+        if current_user.is_authenticated:
+            return redirect(url_for('dashboard'))
+        return render_template('login.html')
+    
+    @app.route('/register')
+    def register_page():
+        if current_user.is_authenticated:
+            return redirect(url_for('dashboard'))
+        return render_template('register.html')
+    
+    @app.route('/dashboard')
+    @login_required
+    def dashboard():
+        return render_template('dashboard.html', user=current_user)
+    
+    @app.route('/logout')
+    @login_required
+    def logout():
+        logout_user()
+        return redirect(url_for('login_page'))
+
+    # ===== API ROUTES =====
     @app.route('/api/auth/register', methods=['POST'])
     def api_register():
         try:
